@@ -18,11 +18,8 @@ function rangeForMode(mode: GameMode, level: number): [number, number] {
     if (level <= 50) return [3, 60];
     return [5, 120];
   }
-  // adult
-  if (level <= 10) return [2, 20];
-  if (level <= 25) return [3, 50];
-  if (level <= 50) return [5, 150];
-  return [20, 400];
+  // fallback to student
+  return [5, 120];
 }
 
 /** Sequential Tabuada: index 0 -> 1x1, 1 -> 1x2, ..., 9 -> 1x10, 10 -> 2x1, ..., 99 -> 10x10 */

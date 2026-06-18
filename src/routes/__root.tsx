@@ -8,9 +8,15 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { ThemeProvider } from "@/contexts/theme-context";
+import { AudioProvider } from "@/contexts/audio-context";
+import { NotificationProvider } from "@/contexts/notification-context";
+import { GameProvider } from "@/contexts/game-context";
+import { AccessibilityProvider } from "@/lib/accessibility";
 
 function NotFoundComponent() {
   return (
@@ -128,8 +134,19 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <GameProvider>
+        <AccessibilityProvider>
+          <ThemeProvider>
+            <AudioProvider>
+              <NotificationProvider>
+                {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+                <Outlet />
+                <Toaster position="top-right" richColors />
+              </NotificationProvider>
+            </AudioProvider>
+          </ThemeProvider>
+        </AccessibilityProvider>
+      </GameProvider>
     </QueryClientProvider>
   );
 }

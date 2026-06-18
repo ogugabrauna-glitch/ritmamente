@@ -6,10 +6,11 @@ interface GameState {
   profile: Profile | null;
   mode: GameMode;
   stats: Stats;
-  settings: { sound: boolean; vibrate: boolean; music: boolean; musicVolume: number; showRitmizinho: boolean; tutorialSeen: boolean; cinematicSeen: boolean; langPicked: boolean };
+  settings: { sound: boolean; vibrate: boolean; music: boolean; musicVolume: number; showSuperRitmo: boolean; tutorialSeen: boolean; cinematicSeen: boolean; langPicked: boolean; theme?: "light" | "dark" | "auto"; trainingMode?: boolean };
   setProfile: (p: Profile) => void;
   setMode: (m: GameMode) => void;
   updateStats: (patch: Partial<Stats>) => void;
+  updateSettings: (patch: Partial<GameState["settings"]>) => void;
   addCorrect: () => void;
   addWrong: () => void;
   resetCombo: () => void;
@@ -23,8 +24,9 @@ interface GameState {
   unlockAchievement: (id: string) => boolean;
   toggleSound: () => void;
   toggleVibrate: () => void;
+  toggleMusic: () => void;
   setMusicVolume: (v: number) => void;
-  toggleRitmizinho: () => void;
+  toggleSuperRitmo: () => void;
   setTutorialSeen: (v: boolean) => void;
   setCinematicSeen: (v: boolean) => void;
   setLangPicked: (v: boolean) => void;
@@ -57,7 +59,7 @@ const defaultStats: Stats = {
   explodeCharge: 0,
 };
 
-const defaultSettings = { sound: true, vibrate: true, music: true, musicVolume: 11, showRitmizinho: true, tutorialSeen: false, cinematicSeen: false, langPicked: false };
+const defaultSettings = { sound: true, vibrate: true, music: true, musicVolume: 22, showSuperRitmo: true, tutorialSeen: false, cinematicSeen: false, langPicked: false, theme: "auto" as const, trainingMode: false };
 
 export const useGame = create<GameState>()(
   persist(
@@ -72,6 +74,7 @@ export const useGame = create<GameState>()(
         stats: { ...get().stats, level: 1, hearts: MAX_HEARTS, credits: Math.max(get().stats.credits, MAX_CREDITS), combo: 0, lastCheckpoint: 1, explodeCharge: 0 },
       }),
       updateStats: (patch) => set({ stats: { ...get().stats, ...patch } }),
+      updateSettings: (patch) => set({ settings: { ...get().settings, ...patch } }),
       addCorrect: () => {
         const s = get().stats;
         const combo = s.combo + 1;
@@ -133,8 +136,9 @@ export const useGame = create<GameState>()(
       },
       toggleSound: () => set({ settings: { ...get().settings, sound: !get().settings.sound } }),
       toggleVibrate: () => set({ settings: { ...get().settings, vibrate: !get().settings.vibrate } }),
+      toggleMusic: () => set({ settings: { ...get().settings, music: !get().settings.music } }),
       setMusicVolume: (v) => set({ settings: { ...get().settings, musicVolume: Math.max(0, Math.min(100, Math.round(v))) } }),
-      toggleRitmizinho: () => set({ settings: { ...get().settings, showRitmizinho: !get().settings.showRitmizinho } }),
+      toggleSuperRitmo: () => set({ settings: { ...get().settings, showSuperRitmo: !get().settings.showSuperRitmo } }),
       setTutorialSeen: (v) => set({ settings: { ...get().settings, tutorialSeen: v } }),
       setCinematicSeen: (v) => set({ settings: { ...get().settings, cinematicSeen: v } }),
       setLangPicked: (v) => set({ settings: { ...get().settings, langPicked: v } }),

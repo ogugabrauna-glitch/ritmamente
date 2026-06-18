@@ -7,7 +7,7 @@ import logo from "@/assets/logo.png";
 
 interface Props { onBack: () => void; onPick: (mode: GameMode) => void; }
 
-const ORDER: GameMode[] = ["kids", "student", "adult", "tabuada", "tabmestre"];
+const ORDER: GameMode[] = ["kids", "student", "tabuada", "tabmestre"];
 
 const ACCENT: Record<GameMode, string> = {
   kids: "from-pink-400 via-yellow-300 to-emerald-300",

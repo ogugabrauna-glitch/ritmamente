@@ -11,6 +11,8 @@ import { ParticleBg } from "./ParticleBg";
 import { Coronation } from "./Coronation";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, useT } from "@/lib/i18n";
+import { useNotification } from "@/hooks/use-notification";
+import { useGlobalKeyboardShortcuts } from "@/lib/accessibility";
 
 interface Props {
   onExit: () => void;
@@ -29,6 +31,12 @@ export function Game({ onExit, onOpenCommunity }: Props) {
 
   const lang = useI18n((s) => s.lang);
   const t = useT();
+  const { warning } = useNotification();
+
+  // Atalhos de teclado: ESC para voltar
+  useGlobalKeyboardShortcuts({
+    onEscape: over ? undefined : onExit,
+  });
 
   const baseLevel = useMemo(() => getLevel(mode, stats.level), [mode, stats.level]);
   // Tabuada: BPM segue a tabuada do nível atual (nível 1 → tab do 1 = 50 BPM, ..., nível 10 → tab do 10 = 100 BPM)

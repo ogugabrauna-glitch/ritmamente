@@ -1,5 +1,5 @@
 export type Operation = "add" | "sub" | "mul" | "div" | "mix" | "master" | "tab";
-export type GameMode = "kids" | "student" | "adult" | "tabuada" | "tabmestre";
+export type GameMode = "kids" | "student" | "tabuada" | "tabmestre";
 
 export interface Profile {
   name: string;

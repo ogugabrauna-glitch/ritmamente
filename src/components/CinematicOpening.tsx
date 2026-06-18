@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RitmizinhoMascot } from "./RitmizinhoMascot";
-import { useT } from "@/lib/i18n";
+import { SuperRitmoMascot } from "./SuperRitmoMascot";
+import { useT, useI18n } from "@/lib/i18n";
 import { forro } from "@/lib/audio/forro";
+import { useSpeechSynthesis } from "@/hooks/use-speech-synthesis";
+import { getSuperRitmoScript } from "@/lib/super-ritmo-scripts";
 
 /**
  * ABERTURA CINEMATOGRÁFICA OFICIAL
- * Tela escura → cortinas se abrindo → palco → Ritmizinho entra saltitando → boas-vindas.
+ * Tela escura → cortinas se abrindo → palco → Super Ritmo entra saltitando → boas-vindas.
+ * Som: Metrônomo → voz sintetizada do Super Ritmo
  */
 export function CinematicOpening({ onDone }: { onDone: () => void }) {
   const t = useT();
+  const { lang } = useI18n();
+  const { speak, stop } = useSpeechSynthesis();
   const [phase, setPhase] = useState<"dark" | "curtains" | "enter" | "talk">("dark");
 
   useEffect(() => {
@@ -22,6 +27,18 @@ export function CinematicOpening({ onDone }: { onDone: () => void }) {
       timers.forEach(clearTimeout);
     };
   }, []);
+
+  // Quando entra na fase de fala, reproduzir voz do Super Ritmo
+  useEffect(() => {
+    if (phase === "talk") {
+      const script = getSuperRitmoScript("opening", lang as "pt" | "en" | "es");
+      // Aguardar um pouco antes de iniciar a fala (animação já está em progresso)
+      const timer = setTimeout(() => {
+        speak(script, { rate: 0.9, pitch: 1.15, volume: 0.85 });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [phase, speak, lang]);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-black">
@@ -115,7 +132,7 @@ export function CinematicOpening({ onDone }: { onDone: () => void }) {
         )}
       </AnimatePresence>
 
-      {/* RITMIZINHO entering */}
+      {/* SUPER RITMO entering */}
       <AnimatePresence>
         {(phase === "enter" || phase === "talk") && (
           <motion.div
@@ -130,7 +147,7 @@ export function CinematicOpening({ onDone }: { onDone: () => void }) {
             }}
             className="absolute bottom-32 left-1/2 -translate-x-1/2"
           >
-            <RitmizinhoMascot size={180} mood={phase === "talk" ? "happy" : "dance"} level={1} />
+            <SuperRitmoMascot size={180} mood={phase === "talk" ? "happy" : "dance"} level={1} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -151,7 +168,10 @@ export function CinematicOpening({ onDone }: { onDone: () => void }) {
                 {t("welcomeMsg")}
               </div>
               <button
-                onClick={onDone}
+                onClick={() => {
+                  stop();
+                  onDone();
+                }}
                 className="mt-5 w-full rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 py-4 font-display text-lg font-black text-amber-950 shadow-lg active:scale-95 transition border-2 border-amber-700"
               >
                 ▶ {t("letsGo")}
@@ -163,7 +183,10 @@ export function CinematicOpening({ onDone }: { onDone: () => void }) {
 
       {/* Skip */}
       <button
-        onClick={onDone}
+        onClick={() => {
+          stop();
+          onDone();
+        }}
         className="absolute top-4 right-4 z-10 rounded-full bg-white/15 backdrop-blur px-4 py-2 text-sm font-bold text-white hover:bg-white/25 border border-white/30"
       >
         Skip →

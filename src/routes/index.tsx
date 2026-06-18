@@ -46,21 +46,17 @@ function Index() {
 
   // Música nordestina: toca desde a escolha do idioma até clicar em "Jogar".
   useEffect(() => {
-    if (!settings.sound || (settings.musicVolume ?? 22) <= 0) { forro.stop(); return; }
-    const shouldPlay = view !== "game";
-    if (shouldPlay) {
-      forro.start();
-      const onGesture = () => { forro.start(); };
-      window.addEventListener("pointerdown", onGesture, { once: true });
-      window.addEventListener("keydown", onGesture, { once: true });
-      return () => {
-        window.removeEventListener("pointerdown", onGesture);
-        window.removeEventListener("keydown", onGesture);
-      };
-    } else {
-      forro.stop();
-    }
-  }, [view, settings.sound, settings.musicVolume]);
+    const shouldPlay = settings.sound && settings.music && settings.musicVolume > 0 && view !== "game";
+    if (!shouldPlay) { forro.stop(); return; }
+    forro.start();
+    const onGesture = () => { forro.start(); };
+    window.addEventListener("pointerdown", onGesture, { once: true });
+    window.addEventListener("keydown", onGesture, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", onGesture);
+      window.removeEventListener("keydown", onGesture);
+    };
+  }, [view, settings.sound, settings.music, settings.musicVolume]);
 
   // First-launch flow: language → cinematic → onboarding/menu
   if (!settings.langPicked) {

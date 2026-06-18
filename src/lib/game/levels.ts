@@ -81,20 +81,13 @@ function opForStudent(level: number): Operation {
   if (level <= 60) return "mix";
   return "master";
 }
-function opForAdult(level: number): Operation {
-  if (level <= 5) return "add";
-  if (level <= 10) return "sub";
-  if (level <= 15) return "mul";
-  if (level <= 20) return "div";
-  if (level <= 40) return "mix";
-  return "master";
-}
 
 function opFor(mode: GameMode, level: number): Operation {
   if (mode === "tabuada") return "tab";
   if (mode === "kids") return opForKids(level);
   if (mode === "student") return opForStudent(level);
-  return opForAdult(level);
+  // fallback to student
+  return opForStudent(level);
 }
 
 export function toleranceMs(mode: GameMode, level: number): number {
@@ -116,11 +109,8 @@ export function toleranceMs(mode: GameMode, level: number): number {
     if (level <= 60) return 200;
     return 150;
   }
-  // adult
-  if (level <= 20) return 350;
-  if (level <= 40) return 250;
-  if (level <= 60) return 150;
-  return 100;
+  // fallback to student
+  return 150;
 }
 
 /** Corrects needed to advance to the next level. */
@@ -157,7 +147,7 @@ export function isCheckpoint(level: number) { return level % 5 === 0; }
 export const MODE_META: Record<GameMode, { name: string; emoji: string; sub: string; tagline: string; ageHint: string }> = {
   kids:     { name: "Modo Kids",          emoji: "🧸", sub: "Lúdico & divertido",    tagline: "Para crianças até 10 anos",       ageHint: "Soma, subtração, divisão exata e tabuada fácil" },
   student:  { name: "Modo Estudante",     emoji: "🎓", sub: "Educativo & progressivo", tagline: "Adolescentes e estudantes",     ageHint: "Todas as operações com progressão" },
-  adult:    { name: "Modo Adulto",        emoji: "🧠", sub: "Desafio avançado",       tagline: "Mestre infinito + expressões",   ageHint: "Operações combinadas e mestre infinito" },
+
   tabuada:  { name: "Tabuada 1 a 10",     emoji: "✖️", sub: "Treine em ordem",         tagline: "Sequencial: 1×1 até 10×10",       ageHint: "Aprenda na ordem certa, passo a passo" },
   tabmestre:{ name: "Tabuada Mestre",     emoji: "👑", sub: "Tabuada aleatória",      tagline: "Domine toda a tabuada misturada", ageHint: "Liberado após concluir 1×1 até 10×10" },
 };

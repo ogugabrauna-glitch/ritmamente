@@ -2,15 +2,40 @@ import { motion } from "framer-motion";
 import { useGame, xpForLevel } from "@/lib/game/store";
 import { useI18n, useT, LANG_OPTIONS } from "@/lib/i18n";
 import { getTitleAt } from "@/lib/game/titles";
-import { Ritmizinho } from "./Ritmizinho";
+import { SuperRitmo } from "./SuperRitmo";
+import { ThemeToggle } from "./ThemeToggle";
+import { useNotification } from "@/hooks/use-notification";
+import { useGlobalKeyboardShortcuts } from "@/lib/accessibility";
 import logo from "@/assets/logo.png";
 
 interface Props { onPlay: () => void; onStats: () => void; onAchievements: () => void; onCommunity: () => void; }
 
 export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
-  const { profile, stats, settings, toggleSound, toggleVibrate, setMusicVolume } = useGame();
+  const { profile, stats, settings, toggleSound, toggleVibrate, toggleMusic, setMusicVolume } = useGame();
   const { lang, setLang } = useI18n();
   const t = useT();
+  const { success } = useNotification();
+
+  // Atalhos: Enter para jogar
+  useGlobalKeyboardShortcuts({
+    onEnter: onPlay,
+  });
+
+  const handleMusicToggle = () => {
+    toggleMusic();
+    success(settings.music ? t("music") + " " + t("disabled") : t("music") + " " + t("enabled"));
+  };
+
+  const handleSoundToggle = () => {
+    toggleSound();
+    success(settings.sound ? t("sound") + " " + t("disabled") : t("sound") + " " + t("enabled"));
+  };
+
+  const handleVibrationToggle = () => {
+    toggleVibrate();
+    success(settings.vibrate ? t("vibration") + " " + t("disabled") : t("vibration") + " " + t("enabled"));
+  };
+
   if (!profile) return null;
   const xpNeeded = xpForLevel(stats.level);
   const title = getTitleAt(stats.level, lang);
@@ -34,15 +59,17 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
           {LANG_OPTIONS.map((l) => (
             <button
               key={l.code}
-              onClick={() => setLang(l.code)}
+              type="button"
+              onClick={() => { setLang(l.code); success(t("language") + ": " + l.label); }}
               className={"rounded-full px-2 py-1 text-xs font-bold " + (lang === l.code ? "bg-gold-grad text-primary-foreground shadow-gold" : "glass")}
-              aria-label={`Idioma ${l.label}`}
+              aria-label={`${t("language")}: ${l.label}`}
             >
               {l.flag} {l.label}
             </button>
           ))}
-          <button onClick={toggleSound} className="rounded-full glass px-2 py-1 text-sm" aria-label={t("sound")}>{settings.sound ? "🔊" : "🔇"}</button>
-          <button onClick={toggleVibrate} className="rounded-full glass px-2 py-1 text-sm" aria-label={t("vibration")}>{settings.vibrate ? "📳" : "📴"}</button>
+          <button type="button" onClick={handleSoundToggle} className="rounded-full glass px-2 py-1 text-sm" aria-label={t("sound")} aria-pressed={settings.sound} title={settings.sound ? "Turn off sound" : "Turn on sound"}>{settings.sound ? "🔊" : "🔇"}</button>
+          <button type="button" onClick={handleVibrationToggle} className="rounded-full glass px-2 py-1 text-sm" aria-label={t("vibration")} aria-pressed={settings.vibrate} title={settings.vibrate ? "Turn off vibration" : "Turn on vibration"}>{settings.vibrate ? "📳" : "📴"}</button>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -50,14 +77,15 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
         <span className="text-lg" aria-hidden>🎵</span>
         <div className="flex-1">
           <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
-            <span>Música de Fundo</span>
-            <span className="text-gold font-bold">{settings.musicVolume ?? 22}%</span>
+            <span>{t("music")}</span>
+            <span className="text-gold font-bold">{settings.musicVolume}%</span>
           </div>
           <input
             type="range" min={0} max={100} step={1}
-            value={settings.musicVolume ?? 22}
+            value={settings.musicVolume}
             onChange={(e) => setMusicVolume(Number(e.target.value))}
-            aria-label="Volume da música de fundo"
+            aria-label={t("music")}
+            disabled={!settings.music}
             className="w-full accent-[color:var(--gold)]"
           />
         </div>
@@ -113,7 +141,12 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
         <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent" style={{ animation: "shimmer 2.5s infinite" }} />
       </motion.button>
 
-      <button onClick={onCommunity} className="rounded-2xl gold-border bg-card/40 p-4 text-left">
+      <button
+        type="button"
+        onClick={onCommunity}
+        className="rounded-2xl gold-border bg-card/40 p-4 text-left"
+        aria-label={t("community")}
+      >
         <div className="flex items-center gap-3">
           <div className="text-3xl">🌐</div>
           <div className="flex-1">
@@ -125,12 +158,22 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
       </button>
 
       <div className="grid grid-cols-2 gap-3">
-        <button onClick={onStats} className="rounded-2xl glass p-4 text-left">
+        <button
+          type="button"
+          onClick={onStats}
+          className="rounded-2xl glass p-4 text-left"
+          aria-label={t("stats")}
+        >
           <div className="text-2xl">📊</div>
           <div className="mt-1 font-bold">{t("stats")}</div>
           <div className="text-xs text-muted-foreground">Acertos, precisão, BPM</div>
         </button>
-        <button onClick={onAchievements} className="rounded-2xl glass p-4 text-left">
+        <button
+          type="button"
+          onClick={onAchievements}
+          className="rounded-2xl glass p-4 text-left"
+          aria-label={`${t("achievements")}: ${stats.achievements.length} ${t("unlocked")}`}
+        >
           <div className="text-2xl">🏆</div>
           <div className="mt-1 font-bold">{t("achievements")}</div>
           <div className="text-xs text-muted-foreground">{stats.achievements.length} desbloqueadas</div>
@@ -142,7 +185,7 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
         {t("howToPlayDesc")}
       </div>
 
-      <Ritmizinho level={stats.level} mood="wave" />
+      <SuperRitmo level={stats.level} mood="wave" />
     </div>
   );
 }
