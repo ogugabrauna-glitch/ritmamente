@@ -42,9 +42,9 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
 
   return (
     <div className="relative mx-auto flex min-h-[100svh] max-w-md flex-col gap-5 p-5">
-      {/* Selo "LovSync v2 funcionando" */}
+      {/* Selo "LovSync v3 funcionando" */}
       <div className="fixed top-4 left-4 z-[9999] bg-red-600 text-white px-4 py-2 rounded-lg font-bold shadow-xl">
-        LovSync v2 funcionando
+        LovSync v3 funcionando
       </div>
 
       <header className="flex items-center justify-between">
