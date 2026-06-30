@@ -186,6 +186,11 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
       </div>
 
       <SuperRitmo level={stats.level} mood="wave" />
+
+      {/* Selo "Teste LovSync" */}
+      <div className="fixed bottom-4 right-4 z-50 rounded-full glass px-3 py-1 text-xs font-bold text-muted-foreground/80 shadow-sm">
+        Teste LovSync
+      </div>
     </div>
   );
 }
