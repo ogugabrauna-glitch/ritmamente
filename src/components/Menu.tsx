@@ -45,8 +45,7 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <motion.img
-            src={logo} alt=""
-            width={1024} height={1024}
+            src={logo} alt="" width={1024} height={1024}
             animate={{ rotate: [0, -3, 3, 0] }}
             transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
             className="h-12 w-12 rounded-xl shadow-gold"
@@ -187,11 +186,6 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
       </div>
 
       <SuperRitmo level={stats.level} mood="wave" />
-
-      {/* Selo de teste LovSync */} 
-      <div className="absolute bottom-4 right-4 rounded-full glass px-3 py-1 text-xs font-bold text-muted-foreground">
-        Teste LovSync
-      </div>
     </div>
   );
 }
