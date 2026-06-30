@@ -42,6 +42,11 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
 
   return (
     <div className="relative mx-auto flex min-h-[100svh] max-w-md flex-col gap-5 p-5">
+      {/* Selo "LovSync v2 funcionando" */}
+      <div className="fixed top-4 left-4 z-[9999] bg-red-600 text-white px-4 py-2 rounded-lg font-bold shadow-xl">
+        LovSync v2 funcionando
+      </div>
+
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <motion.img
@@ -186,11 +191,6 @@ export function Menu({ onPlay, onStats, onAchievements, onCommunity }: Props) {
       </div>
 
       <SuperRitmo level={stats.level} mood="wave" />
-
-      {/* Selo "Teste LovSync" */}
-      <div className="fixed top-4 left-4 z-[9999] bg-red-600 text-white px-4 py-2 rounded-lg font-bold shadow-xl">
-        Teste LovSync
-      </div>
     </div>
   );
 }
